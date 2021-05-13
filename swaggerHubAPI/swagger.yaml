@@ -216,6 +216,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Player'
+        coach:
+          $ref: '#/components/schemas/Coach'
         matchHistory:
           type: array
           items:
