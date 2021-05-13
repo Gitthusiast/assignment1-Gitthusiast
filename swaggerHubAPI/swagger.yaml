@@ -20,10 +20,8 @@ tags:
   description: League details
 - name: match
   description: Match operations
-- name: player
-  description: Player operations
-- name: coach
-  description: Coach operations
+- name: team
+  description: Team operations
 - name: teamMember
   description: teamMember operations
 paths:
@@ -123,7 +121,7 @@ paths:
   /player/{playerId}:
     get:
       tags:
-      - player
+      - teamMember
       summary: Find player by ID
       description: A JSON object containing specific player details
       operationId: getPlayerById
@@ -151,7 +149,7 @@ paths:
   /coach/{coachId}:
     get:
       tags:
-      - coach
+      - teamMember
       summary: Find coach by ID
       description: A JSON object containing specific coach details
       operationId: getCoachById
@@ -176,11 +174,44 @@ paths:
           description: Wrong input parameters
         "404":
           description: Player not found
+  /team/{teamId}:
+    get:
+      tags:
+      - team
+      summary: Find team by ID
+      description: A JSON object containing specific player details
+      operationId: getTeamById
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team needed to be fetched
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+        "400":
+          description: Wrong input parameters
+        "404":
+          description: Team not found
 components:
   schemas:
     Team:
       type: object
       properties:
+        id:
+          type: integer
+          description: Match id
+          format: int64
+          example: 6542
         players:
           type: array
           items:
