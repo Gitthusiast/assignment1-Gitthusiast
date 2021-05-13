@@ -120,7 +120,25 @@ paths:
           description: Wrong input parameters
         "404":
           description: Match not found
-  /player/{playerId}:
+  /teamMember/player:
+    get:
+      tags:
+      - teamMember
+      summary: Retrieve all existing players
+      description: Returns an array of player JSON objects
+      operationId: getAllPlayers
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+        "400":
+          description: Bad Request
+  /teamMember/player/{playerId}:
     get:
       tags:
       - teamMember
@@ -148,7 +166,25 @@ paths:
           description: Wrong input parameters
         "404":
           description: Player not found
-  /coach/{coachId}:
+  /teamMember/coach:
+    get:
+      tags:
+      - teamMember
+      summary: Retrieve all existing coaches
+      description: Returns an array of player JSON objects
+      operationId: getAllCoaches
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coach'
+        "400":
+          description: Bad Request
+  /teamMember/coach/{coachId}:
     get:
       tags:
       - teamMember
@@ -176,6 +212,24 @@ paths:
           description: Wrong input parameters
         "404":
           description: Player not found
+  /team:
+    get:
+      tags:
+      - team
+      summary: Retrieve all existing teams
+      description: Returns an array of player JSON objects
+      operationId: getAllTeams
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+        "400":
+          description: Bad Request
   /team/{teamId}:
     get:
       tags:
@@ -214,6 +268,10 @@ components:
           description: Match id
           format: int64
           example: 6542
+        teamName:
+          type: string
+          description: Team's name
+          example: Stoke City F.C.
         players:
           type: array
           items:
@@ -228,6 +286,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Match'
+        logo-url:
+          type: string
+          description: URL for the team's logo
+          format: URL
+          example: https://res.cloudinary.com/ben-gurion/image/upload/v1620843608/hiloderma_tjlprd.jpg
       description: Model containing information about the team
     TeamMember:
       type: object
@@ -254,6 +317,15 @@ components:
           type: string
           description: Player/Coach's country of birth
           example: Argentina
+        teamName:
+          type: string
+          description: Member's team name
+          example: Blackburn Rovers F.C.
+        image-url:
+          type: string
+          description: URL for the team member's image
+          format: URL
+          example: https://res.cloudinary.com/ben-gurion/image/upload/v1620843608/hiloderma_tjlprd.jpg
       description: |
         Model containing information about team member
     Player:
