@@ -1,0 +1,360 @@
+openapi: 3.0.0
+info:
+  title: Football Managment System API
+  description: This is an API for a footbal management system that allow users to
+    interact with all the system's features.
+  contact:
+    name: Gila Dorfman & Yair Chertkow
+    email: yairch@post.bgu.ac.il
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/dirtycows/footballAPI/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: authentication
+  description: User registration or login
+- name: league
+  description: League details
+- name: match
+  description: Match operations
+- name: player
+  description: Player operations
+- name: coach
+  description: Coach operations
+- name: teamMember
+  description: teamMember operations
+paths:
+  /authentication/register:
+    post:
+      tags:
+      - authentication
+      summary: A new user is added to the system
+      description: |
+        A JSON object containing all the details about the new user.
+      operationId: createNewUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "201":
+          description: A new user has been added
+        "400":
+          description: Wrong input parameters
+  /authentication/login:
+    post:
+      tags:
+      - authentication
+      summary: Connecting user to the system
+      description: A JSON object containing authentication details for sign in.
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDetails'
+        required: true
+      responses:
+        "200":
+          description: User connected successfuly
+        "400":
+          description: Wrong input parameters
+  /league/{leagueId}:
+    get:
+      tags:
+      - league
+      summary: Displayed league details
+      description: A JSON object containing league details
+      operationId: getLeagueById
+      parameters:
+      - name: leagueId
+        in: path
+        description: ID of league needed to be fetched
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Retrieved league successfuly
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/League'
+        "400":
+          description: Wrong input parameters
+        "404":
+          description: League not found
+  /match/{matchId}:
+    get:
+      tags:
+      - match
+      summary: Find match by ID
+      description: A JSON object containing specific game details
+      operationId: getMatchById
+      parameters:
+      - name: matchId
+        in: path
+        description: ID of match needed to be fetched
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Match'
+        "400":
+          description: Wrong input parameters
+        "404":
+          description: Match not found
+  /player/{playerId}:
+    get:
+      tags:
+      - player
+      summary: Find player by ID
+      description: A JSON object containing specific player details
+      operationId: getPlayerById
+      parameters:
+      - name: playerId
+        in: path
+        description: ID of player needed to be fetched
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        "400":
+          description: Wrong input parameters
+        "404":
+          description: Player not found
+  /coach/{coachId}:
+    get:
+      tags:
+      - coach
+      summary: Find coach by ID
+      description: A JSON object containing specific coach details
+      operationId: getCoachById
+      parameters:
+      - name: coachId
+        in: path
+        description: ID of player needed to be fetched
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coach'
+        "400":
+          description: Wrong input parameters
+        "404":
+          description: Player not found
+components:
+  schemas:
+    Team:
+      type: object
+      properties:
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+        matchHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/Match'
+        futureMatches:
+          type: array
+          items:
+            $ref: '#/components/schemas/Match'
+      description: Model containing information about the team
+    TeamMember:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Player/Coach's id
+          format: int64
+          example: 1234
+        commonName:
+          type: string
+          description: Player/Coach's name
+          example: LionelMessi
+        nationality:
+          type: string
+          description: Player/Coach's nationality
+          example: Argentinian
+        dateOfBirth:
+          type: string
+          description: Player/Coach's date of birth
+          format: date
+          example: 1987-06-24
+        birthCountry:
+          type: string
+          description: Player/Coach's country of birth
+          example: Argentina
+      description: |
+        Model containing information about team member
+    Player:
+      properties:
+        height:
+          type: number
+          description: Player's height
+          example: 1.7
+        weight:
+          type: number
+          description: Player's weight
+          example: 72
+      allOf:
+      - $ref: '#/components/schemas/TeamMember'
+    Coach:
+      allOf:
+      - $ref: '#/components/schemas/TeamMember'
+    Match:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Match id
+          format: int64
+          example: 6542
+        homeTeamName:
+          type: string
+          description: The away team's name
+          example: Barrow
+        awayTeamName:
+          type: string
+          description: The away team's name
+          example: BoltonWanderers
+        matchDate:
+          type: string
+          description: The away match's date
+          format: date-time
+          example: 2016-08-29T09:12:33.001Z
+        winnerTeam:
+          type: string
+          description: The winner's team name
+          example: BoltonWanderers
+      description: Model containing information about the match
+    League:
+      type: object
+      properties:
+        leagueName:
+          type: string
+          description: The league's name
+          example: EFL
+        seasonName:
+          type: string
+          description: The season's name
+          example: 2015/2016
+        stageName:
+          type: string
+          description: The leagu's stage name
+          example: Regular Season
+        nextMatchInLeague:
+          $ref: '#/components/schemas/Match'
+      description: Model containing information about the league
+    LoginDetails:
+      type: object
+      properties:
+        username:
+          maxLength: 8
+          minLength: 3
+          type: string
+          description: "Username contains 3-8 characters, letters only."
+          example: hiloderma
+        password:
+          maxLength: 10
+          minLength: 5
+          type: string
+          description: "Password contains between 5 to 10 characters, \nat least one\
+            \ of them is a number and a special character.\n"
+          format: password
+          example: hilo!derma
+      description: Model containing information for login
+    User:
+      required:
+      - country
+      - email
+      - firstname
+      - image-url
+      - lastname
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          maxLength: 8
+          minLength: 3
+          type: string
+          description: "Username contains 3-8 characters, letters only."
+          example: hiloderma
+        firstname:
+          type: string
+          description: User's first name
+          example: gila
+        lastname:
+          type: string
+          description: User's last name
+          example: monster
+        country:
+          type: string
+          description: User's country
+          example: Mexico
+        password:
+          maxLength: 10
+          minLength: 5
+          type: string
+          description: "Password contains between 5 to 10 characters, \nat least one\
+            \ of them is a number and a special character.\n"
+          format: password
+          example: hilo!derma
+        email:
+          type: string
+          description: User's email
+          format: email
+          example: hiloderma@gmail.com
+        image-url:
+          type: string
+          description: URL for the user's image
+          format: URL
+          example: https://res.cloudinary.com/ben-gurion/image/upload/v1620843608/hiloderma_tjlprd.jpg
+        favoriteMatches:
+          type: array
+          items:
+            $ref: '#/components/schemas/Match'
+        favoriteTeams:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
+        favoritePlayers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+      description: Model containing user information.
