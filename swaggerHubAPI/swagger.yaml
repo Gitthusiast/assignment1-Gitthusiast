@@ -24,6 +24,8 @@ tags:
   description: Team operations
 - name: teamMember
   description: teamMember operations
+- name: yolo
+  description: yolo operations
 paths:
   /authentication/register:
     post:
