@@ -17,15 +17,15 @@ tags:
 - name: authentication
   description: User registration or login
 - name: league
-  description: League details
+  description: League operations
 - name: match
   description: Match operations
 - name: team
   description: Team operations
 - name: teamMember
-  description: teamMember operations
-- name: monsters
-  description: Very nudnik orange monsters
+  description: TeamMember operations
+- name: user
+  description: User operations
 paths:
   /authentication/register:
     post:
@@ -258,6 +258,84 @@ paths:
           description: Wrong input parameters
         "404":
           description: Team not found
+  /match/{matchId}/EventCalendar:
+    post:
+      tags:
+      - match
+      summary: Add event calendar to match
+      operationId: addEventCalendarToMatch
+      parameters:
+      - name: matchId
+        in: path
+        description: id of match to be updated
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventsCalendar'
+        required: true
+      responses:
+        "201":
+          description: event calendar has been added to match
+        "400":
+          description: Wrong Input parameters
+  /user/favoriteMatches:
+    post:
+      tags:
+      - user
+      summary: Add match to favorite matches list
+      operationId: addMatchToFavorites
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Match'
+        required: true
+      responses:
+        "201":
+          description: Match has been added to favorite matches
+        "400":
+          description: Wrong Input parameters
+  /user/favoriteTeams:
+    post:
+      tags:
+      - user
+      summary: Add team to favorite teams list
+      operationId: addTeamToFavorites
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+        required: true
+      responses:
+        "201":
+          description: Team has been added to favorite teams
+        "400":
+          description: Wrong Input parameters
+  /user/favoritePlayers:
+    post:
+      tags:
+      - user
+      summary: Add player to favorite players list
+      operationId: addPlayersToFavorites
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+        required: true
+      responses:
+        "201":
+          description: Player has been added to favorite players
+        "400":
+          description: Wrong Input parameters
 components:
   schemas:
     Team:
@@ -303,7 +381,7 @@ components:
         commonName:
           type: string
           description: Player/Coach's name
-          example: LionelMessi
+          example: Lionel Messi
         nationality:
           type: string
           description: Player/Coach's nationality
@@ -338,6 +416,10 @@ components:
           type: number
           description: Player's weight
           example: 72
+        positionNum:
+          type: integer
+          description: player's position number
+          example: 1
       allOf:
       - $ref: '#/components/schemas/TeamMember'
     Coach:
@@ -352,13 +434,9 @@ components:
           format: int64
           example: 6542
         homeTeamName:
-          type: string
-          description: The away team's name
-          example: Barrow
+          $ref: '#/components/schemas/Team'
         awayTeamName:
-          type: string
-          description: The away team's name
-          example: BoltonWanderers
+          $ref: '#/components/schemas/Team'
         matchDate:
           type: string
           description: The away match's date
@@ -368,7 +446,43 @@ components:
           type: string
           description: The winner's team name
           example: BoltonWanderers
+        matchEventCalendar:
+          $ref: '#/components/schemas/EventsCalendar'
       description: Model containing information about the match
+    MatchEvent:
+      type: string
+      description: enum for match events
+      example: goal
+      enum:
+      - goal
+      - offside
+      - redCard
+      - yellowCard
+      - injury
+      - playerSwap
+    EventsCalendar:
+      type: object
+      properties:
+        date:
+          type: string
+          description: the date of the game
+          format: date
+          example: 2017-06-24
+        hour:
+          type: number
+          description: the hour of the game
+          example: 12
+        minuteInGame:
+          type: integer
+          description: the minute of the game at which the event happend
+          example: 53
+        eventDescription:
+          type: string
+          description: the description of the event
+          example: yellow card for messi
+        eventType:
+          $ref: '#/components/schemas/MatchEvent'
+      description: the event's calendar of the game
     League:
       type: object
       properties:
